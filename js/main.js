@@ -51,32 +51,43 @@
       sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
     }
 
-    console.log(sceneInfo)
+    // 새로고침했을때 currentScene이 초기화 되는 것을 방지
+    yOffset = window.pageYOffset
+    let totalScrollHeight = 0
+    for (let i = 0; i < sceneInfo.length; i++) {
+      totalScrollHeight += sceneInfo[i].scrollHeight
+      if (totalScrollHeight >= yOffset) {
+        currentScene = i
+        break
+      }
+    }
+    document.body.setAttribute('id', `show-scene-${currentScene}`)
   }
 
   // 몇 번째 스크롤 섹션인지 판별하기 위한 함수
   function scrollLoop() {
     prevScrollHeight = 0
+
     for (let i = 0; i < currentScene; i++) {
       prevScrollHeight += sceneInfo[i].scrollHeight
     }
 
     if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       currentScene++
+      document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
     if (yOffset < prevScrollHeight) {
       if (currentScene === 0) return // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지하기 위한 안전장치(모바일)
       currentScene--
+      document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
-
-    console.log(currentScene)
   }
 
-  window.addEventListener('resize', setLayout) // 디바이스의 화면 높이에 맞춰 resize됨
   window.addEventListener('scroll', () => {
     yOffset = window.pageYOffset
     scrollLoop()
   })
-
-  setLayout()
+  // 'DOMContentLoaded': DOM이 로드됐을때 실행 | 'load': DOM + 이미지가 로드됐을때 실행
+  window.addEventListener('load', setLayout)
+  window.addEventListener('resize', setLayout) // 디바이스의 화면 높이에 맞춰 resize됨
 })()
