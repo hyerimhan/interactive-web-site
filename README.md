@@ -50,9 +50,14 @@ const sceneInfo = [
       messageD: document.querySelector('#scroll-section-0 .main-message.d'),
     },
     values: {
-      // 변화하는 opacity 값의 시작값과 끝값
-      messageA_opacity: [0, 1],
-    },
+        // 변화하는 opacity 값의 시작값과 끝값, {애니메이션이 재생되는 구간 설정}
+        messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
+        messageA_opacity_out: [1, 0, { start: 0.25, end: 0.3 }],
+        messageA_translateY_in: [20, 0, { start: 0.1, end: 0.2 }],
+        messageA_translateY_out: [0, -20, { start: 0.25, end: 0.3 }],
+        messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
+        messageB_opacity_out: [1, 0, { start: 0.25, end: 0.3 }],
+      },
   },
   {
     // 1
@@ -100,15 +105,30 @@ function setLayout() {
   }
 ```
 
-#### 스크롤 텍스트 opacity 애니메이션
+#### 특정 영역에서 스크롤 애니메이션 ON & OFF
 
 ```JavaScript
   function calcValues(values, currentYOffset) {
     let rv
-    // 현재 씬(스크롤 섹션)에서 스크롤된 범위를 비율로 구하기
-    let scrollRatio = currentYOffset / sceneInfo[currentScene].scrollHeight
+    // 현재 씬(스크롤 섹션)에서 현재 내가 위치한 스크롤된 범위를 비율로 구하기
+    const scrollHeight = sceneInfo[currentScene].scrollHeight
+    const scrollRatio = currentYOffset / scrollHeight
+    if (values.length === 3) {
+      // start ~ end 사이에 애니메이션 실행
+      const partScrollStart = values[2].start * scrollHeight
+      const partScrollEnd = values[2].end * scrollHeight
+      const partScrollHeight = partScrollEnd - partScrollStart
 
-    rv = scrollRatio * (values[1] - values[0]) + values[0]
+      if (currentYOffset >= partScrollStart && currentYOffset <= partScrollEnd) {
+        rv = ((currentYOffset - partScrollStart) / partScrollHeight) * (values[1] - values[0]) + values[0]
+      } else if (currentYOffset < partScrollStart) {
+        rv = values[0]
+      } else if (currentYOffset > partScrollEnd) {
+        rv = values[1]
+      }
+    } else {
+      rv = scrollRatio * (values[1] - values[0]) + values[0]
+    }
 
     return rv
   }
@@ -117,19 +137,31 @@ function setLayout() {
     const obj = sceneInfo[currentScene].objs
     const values = sceneInfo[currentScene].values
     const currentYOffset = yOffset - prevScrollHeight
+    const scrollHeight = sceneInfo[currentScene].scrollHeight
+    const scrollRatio = currentYOffset / scrollHeight
 
     switch (currentScene) {
       case 0:
-        let messageA_opacity_in = calcValues(values.messageA_opacity, currentYOffset)
-        obj.messageA.style.opacity = messageA_opacity_in
+        const messageA_opacity_in = calcValues(values.messageA_opacity_in, currentYOffset)
+        const messageA_opacity_out = calcValues(values.messageA_opacity_out, currentYOffset)
+        const messageA_translateY_in = calcValues(values.messageA_translateY_in, currentYOffset)
+        const messageA_translateY_out = calcValues(values.messageA_translateY_out, currentYOffset)
+
+         // 스크롤 위치에 따른 텍스트 위치 변화
+        if (scrollRatio <= 0.22) {
+          // in
+          objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYOffset)
+          // transform 속성 중 뒤에 3d가 붙은 속성은 하드웨어 가속이 보장이 돼서 퍼포먼스가 좋기 때문에 translateY가 아닌 translate3d로 작성했다.
+          // translate3d(x축, y축, z축)
+          objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_in, currentYOffset)}%, 0)`
+        } else {
+          // out
+          objs.messageA.style.opacity = calcValues(values.messageA_opacity_out, currentYOffset)
+          objs.messageA.style.transform = `translate3d(0, ${calcValues(values.messageA_translateY_out, currentYOffset)}%, 0)`
+        }
         break
       // ...
     }
-  }
-
-  function scrollLoop() {
-    // ...
-    playAnimation()
   }
 ```
 
