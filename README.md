@@ -44,6 +44,14 @@ const sceneInfo = [
     scrollHeight: 0,
     objs: {
       container: document.querySelector('#scroll-section-0'),
+      messageA: document.querySelector('#scroll-section-0 .main-message.a'),
+      messageB: document.querySelector('#scroll-section-0 .main-message.b'),
+      messageC: document.querySelector('#scroll-section-0 .main-message.c'),
+      messageD: document.querySelector('#scroll-section-0 .main-message.d'),
+    },
+    values: {
+      // 변화하는 opacity 값의 시작값과 끝값
+      messageA_opacity: [0, 1],
     },
   },
   {
@@ -60,17 +68,69 @@ const sceneInfo = [
 
 function setLayout() {
 // 각 스크롤 섹션의 높이 세팅
-for (let i = 0; i < sceneInfo.length; i++) {
-sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight
-sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
+  for (let i = 0; i < sceneInfo.length; i++) {
+    sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight
+    sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
+  }
 }
-}
-
-window.addEventListener('resize', setLayout) // 디바이스의 화면 높이에 맞춰 resize됨
-
-setLayout()
 })()
 
+```
+
+#### 스크롤 섹션 영역 저장
+
+```JavaScript
+  // 몇 번째 스크롤 섹션인지 판별하기 위한 함수
+  function scrollLoop() {
+    prevScrollHeight = 0
+
+    for (let i = 0; i < currentScene; i++) {
+      prevScrollHeight += sceneInfo[i].scrollHeight
+    }
+
+    if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+      currentScene++
+      document.body.setAttribute('id', `show-scene-${currentScene}`)
+    }
+    if (yOffset < prevScrollHeight) {
+      if (currentScene === 0) return // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지하기 위한 안전장치(모바일)
+      currentScene--
+      document.body.setAttribute('id', `show-scene-${currentScene}`)
+    }
+  }
+```
+
+#### 스크롤 텍스트 opacity 애니메이션
+
+```JavaScript
+  function calcValues(values, currentYOffset) {
+    let rv
+    // 현재 씬(스크롤 섹션)에서 스크롤된 범위를 비율로 구하기
+    let scrollRatio = currentYOffset / sceneInfo[currentScene].scrollHeight
+
+    rv = scrollRatio * (values[1] - values[0]) + values[0]
+
+    return rv
+  }
+
+  function playAnimation() {
+    const obj = sceneInfo[currentScene].objs
+    const values = sceneInfo[currentScene].values
+    const currentYOffset = yOffset - prevScrollHeight
+
+    switch (currentScene) {
+      case 0:
+        let messageA_opacity_in = calcValues(values.messageA_opacity, currentYOffset)
+        obj.messageA.style.opacity = messageA_opacity_in
+        break
+      // ...
+    }
+  }
+
+  function scrollLoop() {
+    // ...
+    playAnimation()
+  }
 ```
 
   </div>
