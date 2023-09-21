@@ -18,8 +18,13 @@
         messageB: document.querySelector('#scroll-section-0 .main-message.b'),
         messageC: document.querySelector('#scroll-section-0 .main-message.c'),
         messageD: document.querySelector('#scroll-section-0 .main-message.d'),
+        canvas: document.querySelector('#video-canvas-0'),
+        context: document.querySelector('#video-canvas-0').getContext('2d'),
+        videoImages: [],
       },
       values: {
+        videoImageCount: 300,
+        imageSequence: [0, 299],
         // 변화하는 opacity 값의 시작값과 끝값, {애니메이션이 재생되는 구간 설정}
         messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
         messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
@@ -96,6 +101,17 @@
     },
   ]
 
+  function setCanvasImages() {
+    let imgElem
+    for (let i = 0; i < sceneInfo[0].values.videoImageCount; i++) {
+      // new Image() = document.createElement('img')
+      imgElem = new Image()
+      imgElem.src = `./video/001/IMG_${6726 + i}.JPG`
+      sceneInfo[0].objs.videoImages.push(imgElem)
+    }
+  }
+  setCanvasImages()
+
   function setLayout() {
     // 각 스크롤 섹션의 높이 세팅
     for (let i = 0; i < sceneInfo.length; i++) {
@@ -156,6 +172,9 @@
 
     switch (currentScene) {
       case 0:
+        let sequence = Math.round(calcValues(values.imageSequence, currentYOffset))
+        objs.context.drawImage(objs.videoImages[sequence], 0, 0)
+
         // 스크롤 위치에 따른 텍스트 위치 변화
         if (scrollRatio <= 0.22) {
           // in
