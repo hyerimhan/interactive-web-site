@@ -187,5 +187,22 @@ function setLayout() {
   }
 ```
 
+#### canvas를 창 사이즈에 맞추기
+
+```HTML
+<canvas id="video-canvas-0" width="1920" height="1080"></canvas>
+```
+
+```JavaScript
+  function setLayout() {
+    // ...
+
+    // canvas의 초기 인라인 스타일의 height를 1080으로 정해놓았기 때문에 heightRatio로 각 디바이스의 화면 크기에 맞도록 설정해춘다.
+    const heightRatio = window.innerHeight / 1080
+    console.log(heightRatio)
+    sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio}) `
+  }
+```
+
   </div>
 </details>
