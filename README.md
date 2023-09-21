@@ -46,17 +46,13 @@ const sceneInfo = [
       container: document.querySelector('#scroll-section-0'),
       messageA: document.querySelector('#scroll-section-0 .main-message.a'),
       messageB: document.querySelector('#scroll-section-0 .main-message.b'),
-      messageC: document.querySelector('#scroll-section-0 .main-message.c'),
-      messageD: document.querySelector('#scroll-section-0 .main-message.d'),
+      // ...
     },
     values: {
         // 변화하는 opacity 값의 시작값과 끝값, {애니메이션이 재생되는 구간 설정}
         messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
         messageA_opacity_out: [1, 0, { start: 0.25, end: 0.3 }],
-        messageA_translateY_in: [20, 0, { start: 0.1, end: 0.2 }],
-        messageA_translateY_out: [0, -20, { start: 0.25, end: 0.3 }],
-        messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
-        messageB_opacity_out: [1, 0, { start: 0.25, end: 0.3 }],
+        // ...
       },
   },
   {
@@ -161,6 +157,32 @@ function setLayout() {
         }
         break
       // ...
+    }
+  }
+```
+
+#### canvas로 비디오 인터렉션 적용하기
+
+```JavaScript
+  function setCanvasImages() {
+    let imgElem
+    for (let i = 0; i < sceneInfo[0].values.videoImageCount; i++) {
+      // new Image()는 document.createElement('img')와 같다.
+      imgElem = new Image()
+      imgElem.src = `./video/001/IMG_${6726 + i}.JPG` // 스크롤 offset별로 이미지 불러오기
+      sceneInfo[0].objs.videoImages.push(imgElem)
+    }
+  }
+  setCanvasImages()
+
+  function playAnimation(){
+    // ...
+    switch(currentScene) {
+      case 0:
+        // 소수점 반올림
+        let sequence = Math.round(calcValues(values.imageSequence, currentYOffset))
+        objs.context.drawImage(objs.videoImages[sequence], 0, 0)
+        // ...
     }
   }
 ```
