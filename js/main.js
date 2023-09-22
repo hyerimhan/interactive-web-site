@@ -1,109 +1,11 @@
+import sceneInfo from './constants.js'
+
 // 디바이스 별로 창 사이즈 변경에 대응하기 위해 따로 함수로 처리한다.
 ;(() => {
   let yOffset = 0 // window.pageOffset 대신 쓸 변수
   let prevScrollHeight = 0 // 현재 스크롤 위치(yOffset)보다 이전에 위치한 스크롤 섹션들의 스크롤 높이값의 합
   let currentScene = 0 // 현재 활성화된(눈 앞에 보고있는) 씬(scroll-section)
   let enterNewScene = false // 새로운 scene이 시작된 순간 true
-
-  // 환경 변수
-  const sceneInfo = [
-    {
-      // 0
-      type: 'sticky',
-      heightNum: 5, // 브라우저 높이의 n배로 scrollHeight 세팅
-      scrollHeight: 0,
-      objs: {
-        container: document.querySelector('#scroll-section-0'),
-        messageA: document.querySelector('#scroll-section-0 .main-message.a'),
-        messageB: document.querySelector('#scroll-section-0 .main-message.b'),
-        messageC: document.querySelector('#scroll-section-0 .main-message.c'),
-        messageD: document.querySelector('#scroll-section-0 .main-message.d'),
-        canvas: document.querySelector('#video-canvas-0'),
-        context: document.querySelector('#video-canvas-0').getContext('2d'),
-        videoImages: [],
-      },
-      values: {
-        videoImageCount: 300,
-        imageSequence: [0, 299],
-        canvas_opacity: [1, 0, { start: 0.9, end: 1 }],
-        // 변화하는 opacity 값의 시작값과 끝값, {애니메이션이 재생되는 구간 설정}
-        messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
-        messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
-        messageC_opacity_in: [0, 1, { start: 0.5, end: 0.6 }],
-        messageD_opacity_in: [0, 1, { start: 0.7, end: 0.8 }],
-        messageA_translateY_in: [20, 0, { start: 0.1, end: 0.2 }],
-        messageB_translateY_in: [20, 0, { start: 0.3, end: 0.4 }],
-        messageC_translateY_in: [20, 0, { start: 0.5, end: 0.6 }],
-        messageD_translateY_in: [20, 0, { start: 0.7, end: 0.8 }],
-        messageA_opacity_out: [1, 0, { start: 0.25, end: 0.3 }],
-        messageB_opacity_out: [1, 0, { start: 0.45, end: 0.5 }],
-        messageC_opacity_out: [1, 0, { start: 0.65, end: 0.7 }],
-        messageD_opacity_out: [1, 0, { start: 0.85, end: 0.9 }],
-        messageA_translateY_out: [0, -20, { start: 0.25, end: 0.3 }],
-        messageB_translateY_out: [0, -20, { start: 0.45, end: 0.5 }],
-        messageC_translateY_out: [0, -20, { start: 0.65, end: 0.7 }],
-        messageD_translateY_out: [0, -20, { start: 0.85, end: 0.9 }],
-      },
-    },
-    {
-      // 1
-      type: 'normal',
-      // heightNum: 5, // type normal에서는 필요 없음
-      scrollHeight: 0,
-      objs: {
-        container: document.querySelector('#scroll-section-1'),
-        content: document.querySelector('#scroll-section-1 .description'),
-      },
-    },
-    {
-      // 2
-      type: 'sticky',
-      heightNum: 5,
-      scrollHeight: 0,
-      objs: {
-        container: document.querySelector('#scroll-section-2'),
-        messageA: document.querySelector('#scroll-section-2 .a'),
-        messageB: document.querySelector('#scroll-section-2 .b'),
-        messageC: document.querySelector('#scroll-section-2 .c'),
-        pinB: document.querySelector('#scroll-section-2 .b .pin'),
-        pinC: document.querySelector('#scroll-section-2 .c .pin'),
-        canvas: document.querySelector('#video-canvas-1'),
-        context: document.querySelector('#video-canvas-1').getContext('2d'),
-        videoImages: [],
-      },
-      values: {
-        videoImageCount: 960,
-        imageSequence: [0, 959],
-        canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
-        canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }],
-        messageA_translateY_in: [20, 0, { start: 0.15, end: 0.2 }],
-        messageB_translateY_in: [30, 0, { start: 0.6, end: 0.65 }],
-        messageC_translateY_in: [30, 0, { start: 0.87, end: 0.92 }],
-        messageA_opacity_in: [0, 1, { start: 0.25, end: 0.3 }],
-        messageB_opacity_in: [0, 1, { start: 0.6, end: 0.65 }],
-        messageC_opacity_in: [0, 1, { start: 0.87, end: 0.92 }],
-        messageA_translateY_out: [0, -20, { start: 0.4, end: 0.45 }],
-        messageB_translateY_out: [0, -20, { start: 0.68, end: 0.73 }],
-        messageC_translateY_out: [0, -20, { start: 0.95, end: 1 }],
-        messageA_opacity_out: [1, 0, { start: 0.4, end: 0.45 }],
-        messageB_opacity_out: [1, 0, { start: 0.68, end: 0.73 }],
-        messageC_opacity_out: [1, 0, { start: 0.95, end: 1 }],
-        pinB_scaleY: [0.5, 1, { start: 0.6, end: 0.65 }],
-        pinC_scaleY: [0.5, 1, { start: 0.87, end: 0.92 }],
-      },
-    },
-    {
-      // 3
-      type: 'sticky',
-      heightNum: 5,
-      scrollHeight: 0,
-      objs: {
-        container: document.querySelector('#scroll-section-3'),
-        canvasCaption: document.querySelector('.canvas-caption'),
-      },
-      values: {},
-    },
-  ]
 
   function setCanvasImages() {
     // 0
@@ -121,6 +23,14 @@
       imgElem2 = new Image()
       imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`
       sceneInfo[2].objs.videoImages.push(imgElem2)
+    }
+
+    // 3
+    let imgElem3
+    for (let i = 0; i < sceneInfo[3].objs.imagesPath.length; i++) {
+      imgElem3 = new Image()
+      imgElem3.src = sceneInfo[3].objs.imagesPath[i]
+      sceneInfo[3].objs.images.push(imgElem3)
     }
   }
   setCanvasImages()
@@ -285,6 +195,21 @@
         }
         break
       case 3:
+        // 가로/세로 모두 꽉 차게 하기 위해 세팅(계산 필요)
+        const widthRatio = window.innerWidth / objs.canvas.width
+        const heightRatio = window.innerHeight / objs.canvas.height
+        let canvasScaleRatio
+
+        if (widthRatio <= heightRatio) {
+          // 캔버스보다 브라우저 창이 홀쭉한 경우
+          canvasScaleRatio = heightRatio
+        } else {
+          // 캔버스보다 브라우저 창이 납작한 경우
+          canvasScaleRatio = widthRatio
+        }
+
+        objs.canvas.style.transform = `scale(${canvasScaleRatio})`
+        objs.context.drawImage(objs.images[0], 0, 0)
         break
     }
   }
