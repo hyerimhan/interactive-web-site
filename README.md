@@ -236,7 +236,7 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         // getBoundingClientRect: 해당 element의 위치와 크기의 정보를 알 수 있는 매서드, 스크롤 올/내림 속도에 따라 값이 변한다.
         // values.rectStartY = objs.canvas.getBoundingClientRect().top
 
-        // offsetTop은 전체의 높이값을 불러오지만, 해당 영역에 position: relative를 주면 그 영역의 높이값만 불러올 수 있다.
+        // offsetTop은 전체의 높이값을 불러오지만, 해당 영역에 position: relative를 주면 그 영역의 높이값만 불러올 수 있다. 스크롤 올/내림 속도에 따라 값이 변하지 않는다.
         values.rectStartY = objs.canvas.offsetTop + (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2
         values.rect1X[2].start = (window.innerHeight * 0.3) / scrollHeight
         values.rect2X[2].start = (window.innerHeight * 0.3) / scrollHeight
