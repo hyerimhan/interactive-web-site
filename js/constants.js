@@ -99,8 +99,10 @@ const sceneInfo = [
       images: [],
     },
     values: {
+      // 흰색 영역 박스 애니메이션 시작 포인트 세팅
       rect1X: [0, 0, { start: 0, end: 0 }],
       rect2X: [0, 0, { start: 0, end: 0 }],
+      rectStartY: 0,
     },
   },
 ]

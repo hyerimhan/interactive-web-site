@@ -119,11 +119,26 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
       }
 
       objs.canvas.style.transform = `scale(${canvasScaleRatio})`
+      objs.context.fillStyle = 'white'
       objs.context.drawImage(objs.images[0], 0, 0)
 
       // 캔버스 사이즈에 맞춰 가정한 innerWidth와 innerHeight
-      const recalculatedInnerWidth = window.innerWidth / canvasScaleRatio
-      const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio
+      // document.body.offsetWidth: 스크롤바 영역 제외
+      const recalculatedInnerWidth = document.body.offsetWidth / canvasScaleRatio
+      const recalculatedInnerHeight = document.body.offsetHeight / canvasScaleRatio
+
+      // 처음의 Y위치만 저장
+      if (!values.rectStartY) {
+        // getBoundingClientRect: 해당 element의 위치와 크기의 정보를 알 수 있는 매서드, 스크롤 올/내림 속도에 따라 값이 변한다.
+        // values.rectStartY = objs.canvas.getBoundingClientRect().top
+
+        // offsetTop은 전체의 높이값을 불러오지만, 해당 영역에 position: relative를 주면 그 영역의 높이값만 불러올 수 있다.
+        values.rectStartY = objs.canvas.offsetTop + (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2
+        values.rect1X[2].start = (window.innerHeight * 0.3) / scrollHeight
+        values.rect2X[2].start = (window.innerHeight * 0.3) / scrollHeight
+        values.rect1X[2].end = values.rectStartY / scrollHeight
+        values.rect2X[2].end = values.rectStartY / scrollHeight
+      }
 
       const whiteRectWidth = recalculatedInnerWidth * 0.15
       values.rect1X[0] = (objs.canvas.width - recalculatedInnerWidth) / 2
@@ -133,8 +148,10 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
 
       // 좌우 흰색 박스 그리기
       // fillRect(x, y, width, height)
-      objs.context.fillRect(values.rect1X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
-      objs.context.fillRect(values.rect2X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
+      // objs.context.fillRect(values.rect1X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
+      // objs.context.fillRect(values.rect2X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
+      objs.context.fillRect(parseInt(calcValues(values.rect1X, currentYOffset)), 0, parseInt(whiteRectWidth), objs.canvas.height)
+      objs.context.fillRect(parseInt(calcValues(values.rect2X, currentYOffset)), 0, parseInt(whiteRectWidth), objs.canvas.height)
 
       break
   }
