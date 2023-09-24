@@ -98,7 +98,10 @@ const sceneInfo = [
       imagesPath: ['./images/blend-image-1.jpg', './images/blend-image-2.jpg'],
       images: [],
     },
-    values: {},
+    values: {
+      rect1X: [0, 0, { start: 0, end: 0 }],
+      rect2X: [0, 0, { start: 0, end: 0 }],
+    },
   },
 ]
 
