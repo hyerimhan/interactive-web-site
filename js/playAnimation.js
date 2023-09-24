@@ -143,6 +143,8 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
 
       break
     case 3:
+      let step = 0
+
       // 가로/세로 모두 꽉 차게 하기 위해 세팅(계산 필요)
       const widthRatio = window.innerWidth / objs.canvas.width
       const heightRatio = window.innerHeight / objs.canvas.height
@@ -170,7 +172,7 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         // getBoundingClientRect: 해당 element의 위치와 크기의 정보를 알 수 있는 매서드, 스크롤 올/내림 속도에 따라 값이 변한다.
         // values.rectStartY = objs.canvas.getBoundingClientRect().top
 
-        // offsetTop은 전체의 높이값을 불러오지만, 해당 영역에 position: relative를 주면 그 영역의 높이값만 불러올 수 있다.
+        // offsetTop은 전체의 높이값을 불러오지만, 해당 영역에 position: relative를 주면 그 영역의 높이값만 불러올 수 있다. 스크롤 올/내림 속도에 따라 값이 변하지 않는다.
         values.rectStartY = objs.canvas.offsetTop + (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2
         values.rect1X[2].start = (window.innerHeight * 0.3) / scrollHeight
         values.rect2X[2].start = (window.innerHeight * 0.3) / scrollHeight
@@ -190,6 +192,19 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
       // objs.context.fillRect(values.rect2X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
       objs.context.fillRect(parseInt(calcValues(values.rect1X, currentYOffset)), 0, parseInt(whiteRectWidth), objs.canvas.height)
       objs.context.fillRect(parseInt(calcValues(values.rect2X, currentYOffset)), 0, parseInt(whiteRectWidth), objs.canvas.height)
+
+      // 캔버스가 브라우저 상단에 닿지 않았다면
+      if (scrollRatio < values.rect1X[2].end) {
+        step = 1
+        // console.log('캔버스 닿기 전')
+        objs.canvas.classList.remove('sticky')
+      } else {
+        step = 2
+        // 이미지 블랜드
+        // console.log('캔버스 닿기 후')
+        objs.canvas.classList.add('sticky')
+        objs.canvas.style.top = `-${(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`
+      }
 
       break
   }

@@ -171,13 +171,14 @@ a {
 #show-scene-3 #scroll-section-3 .sticky-elem {
   display: block;
 }
-.image-blend-canvas {
-  /* background-color: blue; */
-}
 #scroll-section-3 {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.image-blend-canvas.sticky {
+  position: fixed;
+  top: 0;
 }
 
 @media (min-width: 1024px) {
