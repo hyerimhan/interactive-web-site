@@ -214,16 +214,22 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
 
         objs.canvas.classList.add('sticky')
         objs.canvas.style.top = `-${(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`
-      }
 
-      // 이미지 블렌딩 스케일
-      if (scrollRatio > values.blendHeight[2].end) {
-        values.canvas_scale[0] = canvasScaleRatio
-        values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width)
-        values.canvas_scale[2].start = values.blendHeight[2].end
-        values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2
+        // 이미지 블렌딩 스케일
+        if (scrollRatio > values.blendHeight[2].end) {
+          values.canvas_scale[0] = canvasScaleRatio
+          values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width)
+          values.canvas_scale[2].start = values.blendHeight[2].end
+          values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2
 
-        objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYOffset)})`
+          objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYOffset)})`
+          objs.canvas.style.marginTop = 0
+        }
+
+        if (scrollRatio > values.canvas_scale[2].end && values.canvas_scale[2].end > 0) {
+          objs.canvas.classList.remove('sticky')
+          objs.canvas.style.marginTop = `${scrollHeight * 0.4}px`
+        }
       }
 
       break
