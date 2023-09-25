@@ -1,4 +1,4 @@
-# [interactive-web-site (Demo)]()
+# [interactive-web-site (Demo)](https://interactive-web-airmug-pro.netlify.app/)
 
 👆🏻 제목을 클릭하면 배포된 사이트를 확인하실 수 있습니다.
 
@@ -299,6 +299,50 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
       break
   }
 }
+```
+
+#### 스크롤 부드러운 감속 처리
+
+```JavaScript
+  let acc = 0.1 // 스크롤 가속도
+  let delayedYOffset = 0 // 스크롤 시작점
+  let rafId // requestAnimationFrame ID
+  let rafState // requestAnimationFrame 상태
+
+    function loop() {
+    delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc
+
+    // 애니메이션 부드러운 감속 스크롤 처리
+    if (!enterNewScene) {
+      if (currentScene === 0 || currentScene === 2) {
+        const currentYOffset = delayedYOffset - prevScrollHeight
+        const objs = sceneInfo[currentScene].objs
+        const values = sceneInfo[currentScene].values
+        let sequence = Math.round(calcValues(values.imageSequence, currentYOffset))
+
+        if (objs.videoImages[sequence]) {
+          objs.context.drawImage(objs.videoImages[sequence], 0, 0)
+        }
+      }
+    }
+
+    rafId = requestAnimationFrame(loop)
+
+    // requestAnimationFrame의 무한루프로 인한 과부하 방지
+    if (Math.abs(yOffset - delayedYOffset) < 1) {
+      cancelAnimationFrame(rafId)
+      rafState = false
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    // ...
+
+    if (!rafState) {
+      rafId = requestAnimationFrame(loop)
+      rafState = true
+    }
+  })
 ```
 
   </div>
