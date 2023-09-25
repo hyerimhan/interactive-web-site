@@ -99,9 +99,11 @@ const sceneInfo = [
       images: [],
     },
     values: {
-      // 흰색 영역 박스 애니메이션 시작 포인트 세팅
+      // 흰색 영역 박스 & 블렌딩 애니메이션 시작 포인트 세팅
       rect1X: [0, 0, { start: 0, end: 0 }],
       rect2X: [0, 0, { start: 0, end: 0 }],
+      blendHeight: [0, 0, { start: 0, end: 0 }],
+      canvas_scale: [0, 0, { start: 0, end: 0 }],
       rectStartY: 0,
     },
   },

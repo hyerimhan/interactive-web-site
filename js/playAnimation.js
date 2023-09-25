@@ -200,10 +200,30 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         objs.canvas.classList.remove('sticky')
       } else {
         step = 2
-        // 이미지 블랜드
         // console.log('캔버스 닿기 후')
+        // 이미지 블렌딩
+        values.blendHeight[0] = 0
+        values.blendHeight[1] = objs.canvas.height
+        values.blendHeight[2].start = values.rect1X[2].end
+        values.blendHeight[2].end = values.blendHeight[2].start + 0.2
+
+        const blendHeight = calcValues(values.blendHeight, currentYOffset)
+
+        // drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight )
+        objs.context.drawImage(objs.images[1], 0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight, 0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight)
+
         objs.canvas.classList.add('sticky')
         objs.canvas.style.top = `-${(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`
+      }
+
+      // 이미지 블렌딩 스케일
+      if (scrollRatio > values.blendHeight[2].end) {
+        values.canvas_scale[0] = canvasScaleRatio
+        values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width)
+        values.canvas_scale[2].start = values.blendHeight[2].end
+        values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2
+
+        objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYOffset)})`
       }
 
       break
