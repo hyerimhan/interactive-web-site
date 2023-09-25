@@ -9,6 +9,10 @@ import playAnimation from './playAnimation.js'
   let prevScrollHeight = 0 // 현재 스크롤 위치(yOffset)보다 이전에 위치한 스크롤 섹션들의 스크롤 높이값의 합
   let currentScene = 0 // 현재 활성화된(눈 앞에 보고있는) 씬(scroll-section)
   let enterNewScene = false // 새로운 scene이 시작된 순간 true
+  let acc = 0.1 // 스크롤 가속도
+  let delayedYOffset = 0 // 스크롤 시작점
+  let rafId // requestAnimationFrame ID
+  let rafState // requestAnimationFrame 상태
 
   setCanvasImages()
 
@@ -54,12 +58,12 @@ import playAnimation from './playAnimation.js'
       prevScrollHeight += sceneInfo[i].scrollHeight
     }
 
-    if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+    if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       enterNewScene = true
       currentScene++
       document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
-    if (yOffset < prevScrollHeight) {
+    if (delayedYOffset < prevScrollHeight) {
       enterNewScene = true
       if (currentScene === 0) return // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지하기 위한 안전장치(모바일)
       currentScene--
@@ -69,11 +73,43 @@ import playAnimation from './playAnimation.js'
     playAnimation(currentScene, yOffset, prevScrollHeight, calcValues)
   }
 
+  function loop() {
+    delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc
+
+    // 애니메이션 부드러운 감속 스크롤 처리
+    if (!enterNewScene) {
+      if (currentScene === 0 || currentScene === 2) {
+        const currentYOffset = delayedYOffset - prevScrollHeight
+        const objs = sceneInfo[currentScene].objs
+        const values = sceneInfo[currentScene].values
+        let sequence = Math.round(calcValues(values.imageSequence, currentYOffset))
+
+        if (objs.videoImages[sequence]) {
+          objs.context.drawImage(objs.videoImages[sequence], 0, 0)
+        }
+      }
+    }
+
+    rafId = requestAnimationFrame(loop)
+
+    if (Math.abs(yOffset - delayedYOffset) < 1) {
+      cancelAnimationFrame(rafId)
+      rafState = false
+    }
+  }
+
   window.addEventListener('scroll', () => {
     yOffset = window.pageYOffset
     scrollLoop()
     checkMenu()
+
+    // requestAnimationFrame의 무한루프로 인한 과부하 방지
+    if (!rafState) {
+      rafId = requestAnimationFrame(loop)
+      rafState = true
+    }
   })
+
   // 'DOMContentLoaded': DOM이 로드됐을때 실행 | 'load': DOM + 이미지가 로드됐을때 실행
   window.addEventListener('load', () => {
     setLayout()

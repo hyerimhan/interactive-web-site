@@ -9,8 +9,8 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
 
   switch (currentScene) {
     case 0:
-      let sequence = Math.round(calcValues(values.imageSequence, currentYOffset))
-      objs.context.drawImage(objs.videoImages[sequence], 0, 0)
+      // let sequence = Math.round(calcValues(values.imageSequence, currentYOffset))
+      // objs.context.drawImage(objs.videoImages[sequence], 0, 0)
       objs.canvas.style.opacity = calcValues(values.canvas_opacity, currentYOffset)
 
       // 스크롤 위치에 따른 텍스트 위치 변화
@@ -57,8 +57,8 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
       }
       break
     case 2:
-      let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset))
-      objs.context.drawImage(objs.videoImages[sequence2], 0, 0)
+      // let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset))
+      // objs.context.drawImage(objs.videoImages[sequence2], 0, 0)
 
       // canvas 애니메이션
       if (scrollRatio <= 0.5) {
