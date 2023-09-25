@@ -14,8 +14,6 @@ import playAnimation from './playAnimation.js'
   let rafId // requestAnimationFrame ID
   let rafState // requestAnimationFrame 상태
 
-  setCanvasImages()
-
   function checkMenu() {
     if (yOffset > 44) {
       document.body.classList.add('local-nav-sticky')
@@ -115,5 +113,15 @@ import playAnimation from './playAnimation.js'
     setLayout()
     sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
   })
-  window.addEventListener('resize', setLayout) // 디바이스의 화면 높이에 맞춰 resize됨
+  // 디바이스의 화면 높이에 맞춰 resize됨
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 600) {
+      setLayout()
+    }
+    sceneInfo[3].values.rectStartY = 0
+  })
+  // 디바이스가 가로/세로 모드로 변경될 때
+  window.addEventListener('orientationchange', setLayout)
+
+  setCanvasImages()
 })()
