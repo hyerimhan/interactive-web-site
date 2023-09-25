@@ -229,6 +229,15 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         if (scrollRatio > values.canvas_scale[2].end && values.canvas_scale[2].end > 0) {
           objs.canvas.classList.remove('sticky')
           objs.canvas.style.marginTop = `${scrollHeight * 0.4}px`
+
+          // 마지막 문단 애니메이션
+          values.canvasCaption_opacity[2].start = values.canvas_scale[2].end
+          values.canvasCaption_opacity[2].end = values.canvasCaption_opacity[2].start + 0.1
+          // values.canvasCaption_opacity[2].start, end와 계산한 값이 같음
+          values.canvasCaption_translateY[2].start = values.canvasCaption_opacity[2].start
+          values.canvasCaption_translateY[2].end = values.canvasCaption_opacity[2].end
+          objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYOffset)
+          objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYOffset)}%, 0)`
         }
       }
 
