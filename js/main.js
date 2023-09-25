@@ -12,6 +12,14 @@ import playAnimation from './playAnimation.js'
 
   setCanvasImages()
 
+  function checkMenu() {
+    if (yOffset > 44) {
+      document.body.classList.add('local-nav-sticky')
+    } else {
+      document.body.classList.remove('local-nav-sticky')
+    }
+  }
+
   function calcValues(values, currentYOffset) {
     let rv
     // 현재 씬(스크롤 섹션)에서 현재 내가 위치한 스크롤된 범위를 비율로 구하기
@@ -64,6 +72,7 @@ import playAnimation from './playAnimation.js'
   window.addEventListener('scroll', () => {
     yOffset = window.pageYOffset
     scrollLoop()
+    checkMenu()
   })
   // 'DOMContentLoaded': DOM이 로드됐을때 실행 | 'load': DOM + 이미지가 로드됐을때 실행
   window.addEventListener('load', () => {
