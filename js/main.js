@@ -1,7 +1,7 @@
 import sceneInfo from './constants.js'
 import setCanvasImages from './setCanvasImages.js'
-import setLayout from './setLayout.js'
 import playAnimation from './playAnimation.js'
+import checkMenu from './checkMenu.js'
 
 // 디바이스 별로 창 사이즈 변경에 대응하기 위해 따로 함수로 처리한다.
 ;(() => {
@@ -14,12 +14,34 @@ import playAnimation from './playAnimation.js'
   let rafId // requestAnimationFrame ID
   let rafState // requestAnimationFrame 상태
 
-  function checkMenu() {
-    if (yOffset > 44) {
-      document.body.classList.add('local-nav-sticky')
-    } else {
-      document.body.classList.remove('local-nav-sticky')
+  function setLayout() {
+    // 각 스크롤 섹션의 높이 세팅
+    for (let i = 0; i < sceneInfo.length; i++) {
+      if (sceneInfo[i].type === 'sticky') {
+        sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight
+      } else if (sceneInfo[i].type === 'normal') {
+        // 설정된 높이값 없애기 (그냥 컨텐츠 높이)
+        sceneInfo[i].scrollHeight = sceneInfo[i].objs.content.offsetHeight + window.innerHeight * 0.5
+      }
+      sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`
     }
+
+    // 새로고침했을때 currentScene이 초기화 되는 것을 방지
+    yOffset = window.pageYOffset
+    let totalScrollHeight = 0
+    for (let i = 0; i < sceneInfo.length; i++) {
+      totalScrollHeight += sceneInfo[i].scrollHeight
+      if (totalScrollHeight >= yOffset) {
+        currentScene = i
+        break
+      }
+    }
+    document.body.setAttribute('id', `show-scene-${currentScene}`)
+
+    // canvas의 초기 인라인 스타일의 height를 1080으로 정해놓았기 때문에 heightRatio로 각 디바이스의 화면 크기에 맞도록 설정해춘다.
+    const heightRatio = window.innerHeight / 1080
+    sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`
+    sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`
   }
 
   function calcValues(values, currentYOffset) {
@@ -68,6 +90,7 @@ import playAnimation from './playAnimation.js'
       document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
     if (enterNewScene) return
+    // playAnimation(currentScene, yOffset, prevScrollHeight, calcValues)
     playAnimation(currentScene, yOffset, prevScrollHeight, calcValues)
   }
 
@@ -98,14 +121,31 @@ import playAnimation from './playAnimation.js'
 
   // 'DOMContentLoaded': DOM이 로드됐을때 실행 | 'load': DOM + 이미지가 로드됐을때 실행
   window.addEventListener('load', () => {
+    setLayout() // 중간에 새로고침 시, 콘텐츠 양에 따라 높이 계산에 오차가 발생하는 경우를 방지하기 위해 before-load 클래스 제거 전에도 확실하게 높이를 세팅하도록 한번 더 실행
     document.body.classList.remove('before-load')
     setLayout()
     sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
 
+    // 중간에서 새로고침 했을 경우 자동 스크롤로 제대로 그려주기
+    let tempYOffset = yOffset
+    let tempScrollCount = 0
+    if (tempYOffset > 0) {
+      let siId = setInterval(() => {
+        // scrollTo(x, y)
+        scrollTo(0, tempYOffset)
+        tempYOffset += 5
+
+        if (tempScrollCount > 20) {
+          clearInterval(siId)
+        }
+        tempScrollCount++
+      }, 20)
+    }
+
     window.addEventListener('scroll', () => {
       yOffset = window.pageYOffset
       scrollLoop()
-      checkMenu()
+      checkMenu(yOffset)
 
       // requestAnimationFrame의 무한루프로 인한 과부하 방지
       if (!rafState) {
@@ -117,14 +157,16 @@ import playAnimation from './playAnimation.js'
     // 디바이스의 화면 높이에 맞춰 resize됨
     window.addEventListener('resize', () => {
       if (window.innerWidth > 900) {
-        setLayout()
-        sceneInfo[3].values.rectStartY = 0
+        window.location.reload()
       }
     })
 
     // 디바이스가 가로/세로 모드로 변경될 때
     window.addEventListener('orientationchange', () => {
-      setTimeout(setLayout, 500)
+      scrollTo(0, 0)
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     })
     // transition이 끝나고 난 후
     document.querySelector('.loading').addEventListener('transitionend', (e) => {
