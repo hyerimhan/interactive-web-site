@@ -198,7 +198,7 @@ import { loadImageOfScene0, loadImageOfScene2 } from './loadImages.js'
     // transition이 끝나고 난 후
     document.querySelector('.loading').addEventListener('transitionend', (e) => {
       // 화살표 함수를 사용했기 때문에 this는 사용할 수 없다. 화살표 함수 안에서의 this는 전역객체를 가리키기 때문이다.
-      document.body.removeChild(e.currentTarget)
+      if (e.currentTarget.parentNode === document.body) document.body.removeChild(e.currentTarget)
     })
   })
 })()
