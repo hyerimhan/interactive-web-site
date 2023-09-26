@@ -22,9 +22,7 @@ export function loadImageOfScene0(currentScene, yOffset) {
         setImagesOfScene0()
         initAfterLoadImages(currentScene, yOffset)
 
-        if (!sceneInfo[2].finishedLoadingImages) {
-          loadImageOfScene2()
-        }
+        if (!sceneInfo[2].finishedLoadingImages) loadImageOfScene2()
       }
     })
   }
@@ -48,9 +46,7 @@ export function loadImageOfScene2(currentScene, yOffset) {
         setImagesOfScene2()
         initAfterLoadImages(currentScene, yOffset)
 
-        if (!sceneInfo[0].finishedLoadingImages) {
-          loadImageOfScene0()
-        }
+        if (!sceneInfo[0].finishedLoadingImages) loadImageOfScene0()
       }
     })
   }
@@ -101,9 +97,7 @@ function setImagesOfScene2() {
 }
 
 function initAfterLoadImages(currentScene, yOffset) {
-  if (currentScene !== 2 && sceneInfo[0].objs.videoImages[0]) {
-    sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
-  }
+  if (currentScene !== 2 && sceneInfo[0].objs.videoImages[0]) sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
 
   // 중간에서 새로고침 했을 경우 자동 스크롤로 제대로 그려주기
   let tempYOffset = yOffset
@@ -114,9 +108,8 @@ function initAfterLoadImages(currentScene, yOffset) {
       scrollTo(0, tempYOffset)
       tempYOffset += 5
 
-      if (tempScrollCount > 20) {
-        clearInterval(siId)
-      }
+      if (tempScrollCount > 20) clearInterval(siId)
+
       tempScrollCount++
     }, 20)
   }
