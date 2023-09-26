@@ -345,5 +345,87 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
   })
 ```
 
+#### SVG stroke 로딩 애니메이션
+
+```HTML
+<!-- html -->
+<body class="before-load">
+  <div class="loading">
+    <svg class="loading-circle">
+      <circle cx="50%" cy="50%" r="25"></circle>
+    </svg>
+  </div>
+
+  // ...
+</body>
+```
+
+```CSS
+/* css */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background-color: white;
+  opacity: 0;
+  transition: 0.5s;
+}
+.before-load .loading {
+  opacity: 1;
+}
+@keyframes loading-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loading-circle-ani {
+  0% {
+    stroke-dashoffset: 157;
+  }
+  75% {
+    stroke-dashoffset: -147;
+  }
+  100% {
+    stroke-dashoffset: -157;
+  }
+}
+.loading-circle {
+  width: 54px;
+  height: 54px;
+  animation: loading-spin 3s infinite;
+}
+.loading-circle circle {
+  stroke: black;
+  /* stroke-width: stroke 선의 두께 */
+  stroke-width: 4;
+  /* JavaScript에서 getTotalLength()로 stroke의 길이를 얻어올 수 있음 */
+  /* stroke-dasharray: stroke의 총 길이 */
+  stroke-dasharray: 157;
+  stroke-dashoffset: 0;
+  fill: transparent;
+  animation: loading-circle-ani 1s infinite;
+}
+```
+
+```JavaScript
+  // JavaScript
+  window.addEventListener('load', () => {
+    document.body.classList.remove('before-load')
+    // ...
+  })
+
+    // transition이 끝나고 난 후
+  document.querySelector('.loading').addEventListener('transitionend', (e) => {
+    // 화살표 함수를 사용했기 때문에 this는 사용할 수 없다. 화살표 함수 안에서의 this는 전역객체를 가리키기 때문이다.
+    document.body.removeChild(e.currentTarget)
+  })
+```
+
   </div>
 </details>
