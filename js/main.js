@@ -1,9 +1,9 @@
 import sceneInfo from './constants.js'
-import setCanvasImages from './setCanvasImages.js'
 import playAnimation from './playAnimation.js'
 import checkMenu from './checkMenu.js'
 
 // 디바이스 별로 창 사이즈 변경에 대응하기 위해 따로 함수로 처리한다.
+import { loadImageOfScene0, loadImageOfScene2 } from './loadImages.js'
 ;(() => {
   let yOffset = 0 // window.pageOffset 대신 쓸 변수
   let prevScrollHeight = 0 // 현재 스크롤 위치(yOffset)보다 이전에 위치한 스크롤 섹션들의 스크롤 높이값의 합
@@ -124,6 +124,21 @@ import checkMenu from './checkMenu.js'
       }
     }
 
+    // 일부 기기에서 페이지 끝으로 고속 이동하면 body id가 제대로 인식 안되는 경우를 해결
+    // 페이지 맨 위로 갈 경우: scrollLoop와 첫 scene의 기본 캔버스 그리기 수행
+    if (delayedYOffset < 1) {
+      scrollLoop()
+      sceneInfo[0].objs.canvas.style.opacity = 1
+      if (sceneInfo[0].objs.videoImages[0]) {
+        sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
+      }
+    }
+    // 페이지 맨 아래로 갈 경우: 마지막 섹션은 스크롤 계산으로 위치 및 크기를 결정해야할 요소들이 많아서 1픽셀을 움직여주는 것으로 해결
+    if (document.body.offsetHeight - window.innerHeight - delayedYOffset < 1) {
+      let tempYOffset = yOffset
+      scrollTo(0, tempYOffset - 1)
+    }
+
     rafId = requestAnimationFrame(loop)
 
     if (Math.abs(yOffset - delayedYOffset) < 1) {
@@ -133,26 +148,25 @@ import checkMenu from './checkMenu.js'
   }
 
   // 'DOMContentLoaded': DOM이 로드됐을때 실행 | 'load': DOM + 이미지가 로드됐을때 실행
-  window.addEventListener('load', () => {
+  window.addEventListener('DOMContentLoaded', () => {
     setLayout() // 중간에 새로고침 시, 콘텐츠 양에 따라 높이 계산에 오차가 발생하는 경우를 방지하기 위해 before-load 클래스 제거 전에도 확실하게 높이를 세팅하도록 한번 더 실행
     document.body.classList.remove('before-load')
     setLayout()
-    sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
 
-    // 중간에서 새로고침 했을 경우 자동 스크롤로 제대로 그려주기
-    let tempYOffset = yOffset
-    let tempScrollCount = 0
-    if (tempYOffset > 0) {
-      let siId = setInterval(() => {
-        // scrollTo(x, y)
-        scrollTo(0, tempYOffset)
-        tempYOffset += 5
+    // Scene3 이미지 블렌드 캔버스에 쓰는 이미지 세팅
+    let imgElem
+    for (let i = 0; i < sceneInfo[3].objs.imagesPath.length; i++) {
+      imgElem = new Image()
+      imgElem.src = sceneInfo[3].objs.imagesPath[i]
+      sceneInfo[3].objs.images.push(imgElem)
+    }
 
-        if (tempScrollCount > 20) {
-          clearInterval(siId)
-        }
-        tempScrollCount++
-      }, 20)
+    if (currentScene !== 2) {
+      // 0, 첫번쨰 씬의 이미지를 로드
+      loadImageOfScene0(currentScene, yOffset)
+    } else {
+      // 2, 세번쨰 씬의 이미지를 로드
+      loadImageOfScene2(currentScene, yOffset)
     }
 
     window.addEventListener('scroll', () => {
@@ -187,6 +201,4 @@ import checkMenu from './checkMenu.js'
       document.body.removeChild(e.currentTarget)
     })
   })
-
-  setCanvasImages()
 })()

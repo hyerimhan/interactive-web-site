@@ -37,6 +37,7 @@ const sceneInfo = [
       messageC_translateY_out: [0, -20, { start: 0.65, end: 0.7 }],
       messageD_translateY_out: [0, -20, { start: 0.85, end: 0.9 }],
     },
+    finishedLoadingImages: false,
   },
   {
     // 1
@@ -84,6 +85,7 @@ const sceneInfo = [
       pinB_scaleY: [0.5, 1, { start: 0.6, end: 0.65 }],
       pinC_scaleY: [0.5, 1, { start: 0.87, end: 0.92 }],
     },
+    finishedLoadingImages: false,
   },
   {
     // 3
