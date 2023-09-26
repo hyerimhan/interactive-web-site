@@ -78,19 +78,32 @@ import checkMenu from './checkMenu.js'
       prevScrollHeight += sceneInfo[i].scrollHeight
     }
 
+    if (delayedYOffset < prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+      document.body.classList.remove('scroll-effect-end')
+    }
+
     if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       enterNewScene = true
-      currentScene++
+
+      if (currentScene === sceneInfo.length - 1) {
+        document.body.classList.add('scroll-effect-end')
+      }
+      // scemeInfo에 있는 객체만 인지하게
+      if (currentScene < sceneInfo.length - 1) {
+        currentScene++
+      }
       document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
+
     if (delayedYOffset < prevScrollHeight) {
       enterNewScene = true
       if (currentScene === 0) return // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지하기 위한 안전장치(모바일)
       currentScene--
       document.body.setAttribute('id', `show-scene-${currentScene}`)
     }
+
     if (enterNewScene) return
-    // playAnimation(currentScene, yOffset, prevScrollHeight, calcValues)
+
     playAnimation(currentScene, yOffset, prevScrollHeight, calcValues)
   }
 
