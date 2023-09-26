@@ -188,8 +188,6 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
 
       // 좌우 흰색 박스 그리기
       // fillRect(x, y, width, height)
-      // objs.context.fillRect(values.rect1X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
-      // objs.context.fillRect(values.rect2X[0], 0, parseInt(whiteRectWidth), objs.canvas.height)
       objs.context.fillRect(parseInt(calcValues(values.rect1X, currentYOffset)), 0, parseInt(whiteRectWidth), objs.canvas.height)
       objs.context.fillRect(parseInt(calcValues(values.rect2X, currentYOffset)), 0, parseInt(whiteRectWidth), objs.canvas.height)
 
@@ -238,6 +236,8 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
           values.canvasCaption_translateY[2].end = values.canvasCaption_opacity[2].end
           objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYOffset)
           objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYOffset)}%, 0)`
+        } else {
+          objs.canvasCaption.style.opacity = values.canvasCaption_opacity[0]
         }
       }
 
