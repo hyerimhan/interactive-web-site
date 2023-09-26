@@ -21,6 +21,10 @@ body.before-load {
   overflow: hidden;
 }
 
+.container {
+  /* 모바일 가로 스크롤 방지 */
+  overflow-x: hidden;
+}
 .global-nav {
   position: absolute;
   top: 0;
@@ -44,6 +48,10 @@ body.before-load {
   position: fixed;
   top: 0;
   background-color: rgba(255, 255, 255, 0.1);
+  /* 브라우저별 backdrop-filter 적용 */
+  -webkit-backdrop-filter: saturate(180%) blur(15px);
+  -moz-backdrop-filter: saturate(180%) blur(15px);
+  -o-backdrop-filter: saturate(180%) blur(15px);
   backdrop-filter: saturate(180%) blur(15px);
 }
 .global-nav-links,
@@ -145,11 +153,10 @@ body.before-load {
 }
 .canvas-caption {
   max-width: 1000px;
-  margin: -5em auto 0;
+  margin: -24rem auto 0;
   padding: 0 1rem;
   font-size: 1.2rem;
   color: #888;
-  /* text-align: center; */
 }
 .footer {
   display: flex;
@@ -179,7 +186,7 @@ body.before-load {
 #show-scene-2 #scroll-section-2 .sticky-elem,
 #show-scene-3 #scroll-section-3 .sticky-elem {
   display: block;
-  /* will-change를 남발하는 것은 성능을 열악하게 만든다.*/
+  /* will-change를 남발하는 것은 성능을 열악하게 만든다. */
   will-change: transform, opacity;
 }
 #scroll-section-3 {
@@ -277,6 +284,7 @@ body.before-load {
     font-size: 4vw;
   }
   .canvas-caption {
+    margin-top: -8rem;
     padding: 0;
     font-size: 2rem;
   }

@@ -116,14 +116,16 @@ import playAnimation from './playAnimation.js'
 
     // 디바이스의 화면 높이에 맞춰 resize됨
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 600) {
+      if (window.innerWidth > 900) {
         setLayout()
+        sceneInfo[3].values.rectStartY = 0
       }
-      sceneInfo[3].values.rectStartY = 0
     })
 
     // 디바이스가 가로/세로 모드로 변경될 때
-    window.addEventListener('orientationchange', setLayout)
+    window.addEventListener('orientationchange', () => {
+      setTimeout(setLayout, 500)
+    })
     // transition이 끝나고 난 후
     document.querySelector('.loading').addEventListener('transitionend', (e) => {
       // 화살표 함수를 사용했기 때문에 this는 사용할 수 없다. 화살표 함수 안에서의 this는 전역객체를 가리키기 때문이다.
