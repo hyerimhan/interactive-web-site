@@ -96,37 +96,39 @@ import playAnimation from './playAnimation.js'
     }
   }
 
-  window.addEventListener('scroll', () => {
-    yOffset = window.pageYOffset
-    scrollLoop()
-    checkMenu()
-
-    // requestAnimationFrame의 무한루프로 인한 과부하 방지
-    if (!rafState) {
-      rafId = requestAnimationFrame(loop)
-      rafState = true
-    }
-  })
-
   // 'DOMContentLoaded': DOM이 로드됐을때 실행 | 'load': DOM + 이미지가 로드됐을때 실행
   window.addEventListener('load', () => {
     document.body.classList.remove('before-load')
     setLayout()
     sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0)
-  })
-  // 디바이스의 화면 높이에 맞춰 resize됨
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 600) {
-      setLayout()
-    }
-    sceneInfo[3].values.rectStartY = 0
-  })
-  // 디바이스가 가로/세로 모드로 변경될 때
-  window.addEventListener('orientationchange', setLayout)
-  // transition이 끝나고 난 후
-  document.querySelector('.loading').addEventListener('transitionend', (e) => {
-    // 화살표 함수를 사용했기 때문에 this는 사용할 수 없다. 화살표 함수 안에서의 this는 전역객체를 가리키기 때문이다.
-    document.body.removeChild(e.currentTarget)
+
+    window.addEventListener('scroll', () => {
+      yOffset = window.pageYOffset
+      scrollLoop()
+      checkMenu()
+
+      // requestAnimationFrame의 무한루프로 인한 과부하 방지
+      if (!rafState) {
+        rafId = requestAnimationFrame(loop)
+        rafState = true
+      }
+    })
+
+    // 디바이스의 화면 높이에 맞춰 resize됨
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 600) {
+        setLayout()
+      }
+      sceneInfo[3].values.rectStartY = 0
+    })
+
+    // 디바이스가 가로/세로 모드로 변경될 때
+    window.addEventListener('orientationchange', setLayout)
+    // transition이 끝나고 난 후
+    document.querySelector('.loading').addEventListener('transitionend', (e) => {
+      // 화살표 함수를 사용했기 때문에 this는 사용할 수 없다. 화살표 함수 안에서의 this는 전역객체를 가리키기 때문이다.
+      document.body.removeChild(e.currentTarget)
+    })
   })
 
   setCanvasImages()
