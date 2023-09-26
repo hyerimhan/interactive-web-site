@@ -55,6 +55,7 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         objs.messageD.style.opacity = calcValues(values.messageD_opacity_out, currentYOffset)
         objs.messageD.style.transform = `translate3d(0, ${calcValues(values.messageD_translateY_out, currentYOffset)}%, 0)`
       }
+
       break
     case 2:
       // let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset))
@@ -128,7 +129,7 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         // 캔버스 사이즈에 맞춰 가정한 innerWidth와 innerHeight
         // document.body.offsetWidth: 스크롤바 영역 제외
         const recalculatedInnerWidth = document.body.offsetWidth / canvasScaleRatio
-        const recalculatedInnerHeight = document.body.offsetHeight / canvasScaleRatio
+        const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio
 
         const whiteRectWidth = recalculatedInnerWidth * 0.15
         values.rect1X[0] = (objs.canvas.width - recalculatedInnerWidth) / 2
@@ -165,7 +166,7 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
       // 캔버스 사이즈에 맞춰 가정한 innerWidth와 innerHeight
       // document.body.offsetWidth: 스크롤바 영역 제외
       const recalculatedInnerWidth = document.body.offsetWidth / canvasScaleRatio
-      const recalculatedInnerHeight = document.body.offsetHeight / canvasScaleRatio
+      const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio
 
       // 처음의 Y위치만 저장
       if (!values.rectStartY) {
@@ -211,7 +212,7 @@ function playAnimation(currentScene, yOffset, prevScrollHeight, calcValues) {
         objs.context.drawImage(objs.images[1], 0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight, 0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight)
 
         objs.canvas.classList.add('sticky')
-        objs.canvas.style.top = `-${(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`
+        objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`
 
         // 이미지 블렌딩 스케일
         if (scrollRatio > values.blendHeight[2].end) {
